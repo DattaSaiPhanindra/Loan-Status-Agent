@@ -5,6 +5,7 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "jinja2",
+    "python-multipart",
     "playwright",
     "pydantic>=2.0",
     "pydantic-settings",

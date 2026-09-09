@@ -1,0 +1,56 @@
+<html>
+<head><title>LoanPro - Application Search</title></head>
+<body bgcolor="#f0f0f0">
+<table width="100%" cellpadding="5" cellspacing="0">
+<tr>
+<td bgcolor="#003366">
+<font color="#ffffff" size="4" face="Arial"><b>LoanPro - Application Search</b></font>
+</td>
+<td bgcolor="#003366" align="right">
+<font color="#ffffff" size="2" face="Arial">Logged in as: {{ username }} | <a href="/login"><font color="#ffffff">Logout</font></a></font>
+</td>
+</tr>
+</table>
+<br>
+<table align="center" cellpadding="10" cellspacing="0" border="1" bgcolor="#ffffff" width="700">
+<tr><td>
+<form method="GET" action="/search">
+<table cellpadding="5" cellspacing="0">
+<tr>
+<td><font face="Arial" size="2">Search applications:</font></td>
+<td><input type="text" name="q" size="40" value="{{ query or '' }}"></td>
+<td><input type="submit" value="Search"></td>
+</tr>
+</table>
+</form>
+</td></tr>
+</table>
+<br>
+{% if results is not none %}
+{% if results %}
+<table align="center" border="1" cellpadding="5" cellspacing="0" width="700" bgcolor="#ffffff">
+<tr bgcolor="#003366">
+<td><font color="#ffffff" face="Arial" size="2"><b>Application ID</b></font></td>
+<td><font color="#ffffff" face="Arial" size="2"><b>Applicant</b></font></td>
+<td><font color="#ffffff" face="Arial" size="2"><b>Loan Type</b></font></td>
+<td><font color="#ffffff" face="Arial" size="2"><b>Amount</b></font></td>
+<td><font color="#ffffff" face="Arial" size="2"><b>Status</b></font></td>
+</tr>
+{% for row in results %}
+<tr bgcolor="{% if loop.index0 % 2 == 0 %}#ffffff{% else %}#f5f5f5{% endif %}">
+<td><font face="Arial" size="2"><a href="/application/{{ row.id }}">{{ row.id }}</a></font></td>
+<td><font face="Arial" size="2">{{ row.applicant }}</font></td>
+<td><font face="Arial" size="2">{{ row.loan_type }}</font></td>
+<td><font face="Arial" size="2">${{ "{:,}".format(row.amount) }}</font></td>
+<td><font face="Arial" size="2">{{ row.status }}</font></td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<table align="center" width="700"><tr><td>
+<font face="Arial" size="2" color="#666666">No applications found for '{{ query }}'</font>
+</td></tr></table>
+{% endif %}
+{% endif %}
+</body>
+</html>

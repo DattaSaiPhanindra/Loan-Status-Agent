@@ -1,0 +1,35 @@
+<html>
+<head><title>LoanPro - Staff Login</title></head>
+<body bgcolor="#f0f0f0">
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#003366" align="center" height="50">
+<font color="#ffffff" size="5" face="Arial"><b>LoanPro - Staff Login</b></font>
+</td></tr>
+</table>
+<br><br>
+<table align="center" cellpadding="10" cellspacing="0" border="1" bgcolor="#ffffff" width="350">
+<tr><td>
+{% if expired %}
+<font color="#cc0000" face="Arial" size="2">Session expired. Please log in again.</font><br><br>
+{% endif %}
+<form method="POST" action="/login">
+<table cellpadding="5" cellspacing="0" width="100%">
+<tr>
+<td><font face="Arial" size="2">Username:</font></td>
+<td><input type="text" name="username" size="25"></td>
+</tr>
+<tr>
+<td><font face="Arial" size="2">Password:</font></td>
+<td><input type="password" name="password" size="25"></td>
+</tr>
+<tr>
+<td colspan="2" align="center">
+<input type="submit" value="Sign In">
+</td>
+</tr>
+</table>
+</form>
+</td></tr>
+</table>
+</body>
+</html>

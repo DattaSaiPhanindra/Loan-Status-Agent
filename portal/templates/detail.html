@@ -1,0 +1,82 @@
+<html>
+<head><title>LoanPro - Application Details</title></head>
+<body bgcolor="#f0f0f0">
+<table width="100%" cellpadding="5" cellspacing="0">
+<tr>
+<td bgcolor="#003366">
+<font color="#ffffff" size="4" face="Arial"><b>LoanPro - Application Details</b></font>
+</td>
+<td bgcolor="#003366" align="right">
+<font color="#ffffff" size="2" face="Arial">Logged in as: {{ username }} | <a href="/login"><font color="#ffffff">Logout</font></a></font>
+</td>
+</tr>
+</table>
+<br>
+<table align="center" width="700" cellpadding="5"><tr><td>
+<font face="Arial" size="2"><a href="/search">&lt;&lt; Back to Search</a></font>
+</td></tr></table>
+<br>
+<table align="center" border="1" cellpadding="8" cellspacing="0" width="700" bgcolor="#ffffff">
+<tr bgcolor="#e0e0e0"><td colspan="2"><font face="Arial" size="3"><b>Application Information</b></font></td></tr>
+<tr>
+<td width="180" bgcolor="#f5f5f5"><font face="Arial" size="2"><b>Application ID</b></font></td>
+<td><font face="Arial" size="2">{{ app.id }}</font></td>
+</tr>
+<tr>
+<td bgcolor="#f5f5f5"><font face="Arial" size="2"><b>Applicant Name</b></font></td>
+<td><font face="Arial" size="2">{{ app.applicant }}</font></td>
+</tr>
+<tr>
+<td bgcolor="#f5f5f5"><font face="Arial" size="2"><b>Loan Type</b></font></td>
+<td><font face="Arial" size="2">{{ app.loan_type }}</font></td>
+</tr>
+<tr>
+<td bgcolor="#f5f5f5"><font face="Arial" size="2"><b>Amount</b></font></td>
+<td><font face="Arial" size="2">${{ "{:,}".format(app.amount) }}</font></td>
+</tr>
+<tr>
+<td bgcolor="#f5f5f5"><font face="Arial" size="2"><b>Status</b></font></td>
+<td>
+{% if app.status == "Waiting for Documents" %}
+<font face="Arial" size="2" color="#ff8800"><b>{{ app.status }}</b></font>
+{% elif app.status == "Under Review" %}
+<font face="Arial" size="2" color="#0066cc"><b>{{ app.status }}</b></font>
+{% elif "Approved" in app.status %}
+<font face="Arial" size="2" color="#009900"><b>{{ app.status }}</b></font>
+{% elif app.status == "Denied" %}
+<font face="Arial" size="2" color="#cc0000"><b>{{ app.status }}</b></font>
+{% else %}
+<font face="Arial" size="2">{{ app.status }}</font>
+{% endif %}
+</td>
+</tr>
+<tr>
+<td bgcolor="#f5f5f5"><font face="Arial" size="2"><b>Date Submitted</b></font></td>
+<td><font face="Arial" size="2">{{ app.submitted }}</font></td>
+</tr>
+<tr>
+<td bgcolor="#f5f5f5"><font face="Arial" size="2"><b>Loan Officer</b></font></td>
+<td><font face="Arial" size="2">{{ app.officer }}</font></td>
+</tr>
+</table>
+<br>
+<table align="center" border="1" cellpadding="8" cellspacing="0" width="700" bgcolor="#ffffff">
+<tr bgcolor="#e0e0e0"><td colspan="2"><font face="Arial" size="3"><b>Document Checklist</b></font></td></tr>
+{% if app.missing_docs %}
+{% for doc in app.missing_docs %}
+<tr>
+<td><font face="Arial" size="2">{{ doc }}</font></td>
+<td width="100" align="center"><font face="Arial" size="2" color="#cc0000"><b>MISSING</b></font></td>
+</tr>
+{% endfor %}
+{% else %}
+<tr><td colspan="2"><font face="Arial" size="2" color="#009900"><b>All documents received</b></font></td></tr>
+{% endif %}
+</table>
+<br>
+<table align="center" border="1" cellpadding="8" cellspacing="0" width="700" bgcolor="#ffffff">
+<tr bgcolor="#e0e0e0"><td><font face="Arial" size="3"><b>Next Steps</b></font></td></tr>
+<tr><td><font face="Arial" size="2">{{ app.next_step }}</font></td></tr>
+</table>
+</body>
+</html>
