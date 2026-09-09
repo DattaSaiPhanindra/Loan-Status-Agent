@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+dist/
+*.egg-info
+evidence/*.png
+evidence/*.json
+# artifacts/ is git-tracked on purpose

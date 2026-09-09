@@ -1,0 +1,24 @@
+[project]
+name = "loan-status-agent"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "jinja2",
+    "playwright",
+    "pydantic>=2.0",
+    "pydantic-settings",
+    "anthropic",
+    "python-dotenv",
+    "click",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+]
+
+[project.scripts]
+loan-agent = "cli:main"
