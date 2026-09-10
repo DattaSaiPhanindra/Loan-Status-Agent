@@ -1,0 +1,73 @@
+{
+  "run_id": "escalation_4b8f61aa_retry",
+  "artifact_id": "009f0f8a-dfc7-45dd-956e-48f98addf357",
+  "params": {
+    "application_id": "LN-1042"
+  },
+  "status": "success",
+  "outputs": {
+    "status": "Waiting for Documents",
+    "missing_documents": [
+      "Proof of Income",
+      "Bank Statements"
+    ],
+    "next_steps": "Applicant needs to upload a recent payslip and last 3 months bank statements"
+  },
+  "steps": [
+    {
+      "step_index": 0,
+      "description": "Enter username",
+      "status": "success",
+      "message": "Completed: Enter username",
+      "error": "",
+      "screenshot_path": "evidence\\escalation_4b8f61aa_retry\\step_000.png",
+      "duration_seconds": 0.6560771465301514
+    },
+    {
+      "step_index": 1,
+      "description": "Enter password",
+      "status": "success",
+      "message": "Completed: Enter password",
+      "error": "",
+      "screenshot_path": "evidence\\escalation_4b8f61aa_retry\\step_001.png",
+      "duration_seconds": 0.5311539173126221
+    },
+    {
+      "step_index": 2,
+      "description": "Click Sign In button",
+      "status": "success",
+      "message": "Completed: Click Sign In button",
+      "error": "",
+      "screenshot_path": "evidence\\escalation_4b8f61aa_retry\\step_002.png",
+      "duration_seconds": 0.6934223175048828
+    },
+    {
+      "step_index": 3,
+      "description": "Type application ID into search box",
+      "status": "success",
+      "message": "Completed: Type application ID into search box",
+      "error": "",
+      "screenshot_path": "evidence\\escalation_4b8f61aa_retry\\step_003.png",
+      "duration_seconds": 0.5897400379180908
+    },
+    {
+      "step_index": 4,
+      "description": "Click Search button",
+      "status": "success",
+      "message": "Completed: Click Search button",
+      "error": "",
+      "screenshot_path": "evidence\\escalation_4b8f61aa_retry\\step_004.png",
+      "duration_seconds": 0.7202303409576416
+    },
+    {
+      "step_index": 5,
+      "description": "Click on application link in results",
+      "status": "success",
+      "message": "Completed: Click on application link in results",
+      "error": "",
+      "screenshot_path": "evidence\\escalation_4b8f61aa_retry\\step_005.png",
+      "duration_seconds": 0.9620397090911865
+    }
+  ],
+  "total_duration_seconds": 5.746424198150635
+}

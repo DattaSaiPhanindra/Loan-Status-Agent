@@ -1,0 +1,21 @@
+[
+  {
+    "escalation": {
+      "reason": "session_expired",
+      "message": "Session expired during replay. Please log in again in the browser window.",
+      "current_url": "http://127.0.0.1:8080/login?expired=1",
+      "current_step": -1,
+      "artifact_name": "check_loan_application_status",
+      "screenshot_path": "evidence\\escalation_4b8f61aa\\escalation_before.png",
+      "timestamp": 1789070828.975638
+    },
+    "started_at": 1789070828.9772427,
+    "ended_at": 1789070861.594381,
+    "duration_seconds": 32.62,
+    "human_actions": [
+      "Human took control for 32.6s"
+    ],
+    "resume_url": "http://127.0.0.1:8080/search",
+    "resolution": "resolved"
+  }
+]

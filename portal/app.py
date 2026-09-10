@@ -14,6 +14,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 app = FastAPI()
 app.state.pending_error = "none"
+app.state.session_ttl_override = None
 
 
 def _exempt(path: str) -> bool:
@@ -32,7 +33,8 @@ async def session_and_faults(request: Request, call_next):
 
     if not _exempt(request.url.path):
         sid = request.cookies.get("session_id")
-        if not sid or not session.validate_session(sid, settings.portal_session_ttl):
+        ttl = getattr(app.state, "session_ttl_override", None) or settings.portal_session_ttl
+        if not sid or not session.validate_session(sid, ttl):
             return RedirectResponse("/login?expired=1", status_code=303)
 
     return await call_next(request)
@@ -128,4 +130,11 @@ async def expire_session(request: Request):
 async def inject_error(error_type: str = Form(...)):
     if error_type in ("slow_load", "server_error", "none"):
         app.state.pending_error = error_type
+    return RedirectResponse("/search", status_code=303)
+
+
+@app.post("/admin/set-ttl")
+async def set_ttl(ttl: int = Form(...)):
+    """Set session TTL in seconds (for testing)."""
+    app.state.session_ttl_override = ttl
     return RedirectResponse("/search", status_code=303)

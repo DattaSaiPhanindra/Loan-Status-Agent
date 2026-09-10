@@ -12,6 +12,7 @@ dependencies = [
     "openai",
     "python-dotenv",
     "click",
+    "httpx",
 ]
 
 [project.optional-dependencies]
