@@ -162,6 +162,9 @@ async def execute_step(page: Page, step: StepDefinition, params: dict) -> StepRe
                         elif action.action_type == "select":
                             await loc.first.select_option(value, timeout=5000)
                         locator_resolved = True
+                        logger.debug(
+                            f"Locator resolved for step {step.step_index}: {selector}"
+                        )
                         break
                 except Exception as e:
                     last_error = f"{selector}: {str(e)}"
@@ -362,6 +365,9 @@ async def run_replay(
 
     for step in artifact.steps:
         logger.info(f"Replay step {step.step_index}: {step.description}")
+        logger.debug(
+            f"Step {step.step_index} locator: {step.action.locator.primary if step.action.locator else 'none'}"
+        )
 
         url_ok, url_reason = check_url_allowed(page.url)
         if not url_ok:
