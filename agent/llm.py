@@ -1,75 +1,84 @@
-"""Google Gemini client with function calling for discovery."""
+"""OpenRouter LLM client with tool calling for discovery."""
 
 from __future__ import annotations
 
 import time
 
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
 from agent.surface import Observation
 from config import Settings
 
-TOOL_DECLARATIONS = types.Tool(
-    function_declarations=[
-        types.FunctionDeclaration(
-            name="perform_action",
-            description="Perform an action on the UI surface.",
-            parameters=types.Schema(
-                type="OBJECT",
-                properties={
-                    "action_type": types.Schema(
-                        type="STRING",
-                        enum=["click", "type", "select", "navigate", "wait", "scroll"],
-                        description="Type of action to perform",
-                    ),
-                    "ref": types.Schema(
-                        type="STRING",
-                        description="Element reference from the observation (e.g. 'e3').",
-                    ),
-                    "value": types.Schema(
-                        type="STRING",
-                        description="Value: text to type, URL to navigate, option to select, seconds to wait.",
-                    ),
-                    "description": types.Schema(
-                        type="STRING",
-                        description="Brief description of what this action accomplishes.",
-                    ),
+TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "perform_action",
+            "description": "Perform an action on the UI surface.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action_type": {
+                        "type": "string",
+                        "enum": ["click", "type", "select", "navigate", "wait", "scroll"],
+                        "description": "Type of action to perform",
+                    },
+                    "ref": {
+                        "type": "string",
+                        "description": "Element reference from the observation (e.g. 'e3').",
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "Value: text to type, URL to navigate, option to select, seconds to wait.",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Brief description of what this action accomplishes.",
+                    },
                 },
-                required=["action_type", "description"],
-            ),
-        ),
-        types.FunctionDeclaration(
-            name="mark_complete",
-            description="Call when the goal is fully achieved. Extract requested data from the current page.",
-            parameters=types.Schema(
-                type="OBJECT",
-                properties={
-                    "summary": types.Schema(
-                        type="STRING", description="Summary of what was accomplished"
-                    ),
-                    "extracted_data": types.Schema(
-                        type="OBJECT", description="Key-value pairs of extracted data"
-                    ),
+                "required": ["action_type", "description"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "mark_complete",
+            "description": "Call when the goal is fully achieved. Extract requested data from the current page.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "summary": {
+                        "type": "string",
+                        "description": "Summary of what was accomplished",
+                    },
+                    "extracted_data": {
+                        "type": "object",
+                        "description": "Key-value pairs of extracted data",
+                    },
                 },
-                required=["summary", "extracted_data"],
-            ),
-        ),
-        types.FunctionDeclaration(
-            name="mark_stuck",
-            description="Call when you cannot proceed — unachievable goal, unrecoverable error, or looping.",
-            parameters=types.Schema(
-                type="OBJECT",
-                properties={
-                    "reason": types.Schema(
-                        type="STRING", description="Why you're stuck"
-                    ),
+                "required": ["summary", "extracted_data"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "mark_stuck",
+            "description": "Call when you cannot proceed — unachievable goal, unrecoverable error, or looping.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "Why you're stuck",
+                    },
                 },
-                required=["reason"],
-            ),
-        ),
-    ]
-)
+                "required": ["reason"],
+            },
+        },
+    },
+]
 
 SYSTEM_PROMPT = """You are an AI agent automating a legacy banking back-office application. You observe the current UI state and decide what action to take next to achieve the given goal.
 
@@ -87,20 +96,23 @@ RULES:
 11. You are operating on a LEGACY app with no modern UI. Elements are identified by name attributes and text content, not IDs.
 12. When you need to log in, use username "agent" and password "agent" — these are mock credentials for automation.
 13. IMPORTANT: When you see the data you need on the page (in raw_text), call mark_complete immediately with the extracted data. Don't keep navigating.
-14. ALWAYS call exactly one function per turn. Never respond with plain text — always use perform_action, mark_complete, or mark_stuck.
+14. ALWAYS call exactly one tool per turn. Never respond with plain text only.
 """
 
 
 class LLMClient:
     def __init__(self):
         settings = Settings()
-        self.client = genai.Client(api_key=settings.gemini_api_key)
-        self.model = "gemini-3.5-flash"
-        self.history: list[types.Content] = []
+        self.client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=settings.openrouter_api_key,
+        )
+        self.model = "nvidia/nemotron-3-super-120b-a12b:free"
+        self.messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
     def reset(self):
         """Clear conversation history."""
-        self.history = []
+        self.messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
     def decide(self, goal: str, observation: Observation, step_number: int) -> dict:
         """Given a goal and current observation, return the next action or completion signal."""
@@ -120,72 +132,82 @@ INTERACTIVE ELEMENTS:
 PAGE TEXT (first 2000 chars):
 {observation.raw_text[:2000]}
 
-Decide your next action. If you can see the requested data on the page, call mark_complete with the extracted data. You MUST call one of the functions."""
+Decide your next action. If you can see the requested data on the page, call mark_complete with the extracted data. You MUST call one of the tools."""
 
-        self.history.append(
-            types.Content(role="user", parts=[types.Part.from_text(text=user_content)])
-        )
+        self.messages.append({"role": "user", "content": user_content})
 
         max_retries = 5
         response = None
         for attempt in range(max_retries):
             try:
-                response = self.client.models.generate_content(
+                response = self.client.chat.completions.create(
                     model=self.model,
-                    contents=self.history,
-                    config=types.GenerateContentConfig(
-                        system_instruction=SYSTEM_PROMPT,
-                        tools=[TOOL_DECLARATIONS],
-                        temperature=0.0,
-                        http_options=types.HttpOptions(timeout=30_000),
-                    ),
+                    messages=self.messages,
+                    tools=TOOLS,
+                    tool_choice="auto",
+                    temperature=0.0,
+                    max_tokens=1024,
+                    timeout=60,
                 )
                 break
             except Exception as e:
                 err_str = str(e).lower()
-                retryable = any(k in err_str for k in ["503", "unavailable", "429", "disconnected", "timeout", "connection", "reset", "broken pipe"])
+                retryable = any(
+                    k in err_str
+                    for k in [
+                        "503",
+                        "504",
+                        "unavailable",
+                        "429",
+                        "disconnected",
+                        "timeout",
+                        "deadline",
+                        "connection",
+                        "reset",
+                        "broken pipe",
+                        "rate",
+                        "overloaded",
+                    ]
+                )
                 if retryable:
-                    wait = 2 ** attempt  # 1, 2, 4, 8, 16 seconds
-                    print(f"  Retry {attempt + 1}/{max_retries} after {wait}s: {str(e)[:80]}")
+                    wait = 2 ** attempt
+                    print(
+                        f"  Retry {attempt + 1}/{max_retries} after {wait}s: {str(e)[:80]}"
+                    )
                     time.sleep(wait)
                 else:
                     raise
         if response is None:
             raise RuntimeError("LLM unavailable after retries")
 
-        if response.candidates and response.candidates[0].content:
-            self.history.append(response.candidates[0].content)
+        message = response.choices[0].message
 
-        for part in response.candidates[0].content.parts:
-            if part.function_call:
-                fc = part.function_call
-                args = dict(fc.args) if fc.args else {}
+        self.messages.append(message.model_dump())
 
-                self.history.append(
-                    types.Content(
-                        role="user",
-                        parts=[
-                            types.Part.from_function_response(
-                                name=fc.name,
-                                response={
-                                    "status": "ok",
-                                    "message": "Action acknowledged.",
-                                },
-                            )
-                        ],
-                    )
-                )
+        if message.tool_calls:
+            tc = message.tool_calls[0]
+            import json
 
-                return {"tool": fc.name, "args": args}
+            try:
+                args = json.loads(tc.function.arguments)
+            except json.JSONDecodeError:
+                args = {}
 
-        text_response = ""
-        for part in response.candidates[0].content.parts:
-            if part.text:
-                text_response += part.text
+            self.messages.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": tc.id,
+                    "content": "Action acknowledged. Next observation will follow.",
+                }
+            )
+
+            return {"tool": tc.function.name, "args": args}
+
+        text_response = message.content or "No response"
         return {
             "tool": "mark_stuck",
             "args": {
-                "reason": f"Model did not call a function. Response: {text_response[:200]}"
+                "reason": f"Model did not call a tool. Response: {text_response[:200]}"
             },
         }
 
@@ -193,7 +215,7 @@ Decide your next action. If you can see the requested data on the page, call mar
 if __name__ == "__main__":
     import os
 
-    os.environ.setdefault("GEMINI_API_KEY", "test-key")
+    os.environ.setdefault("OPENROUTER_API_KEY", "test-key")
     client = LLMClient()
     print(f"LLM client OK: model={client.model}")
-    print("Tools: perform_action, mark_complete, mark_stuck")
+    print(f"Tools: {[t['function']['name'] for t in TOOLS]}")

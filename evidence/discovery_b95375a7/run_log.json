@@ -1,0 +1,173 @@
+{
+  "run_id": "discovery_b95375a7",
+  "success": true,
+  "goal": "Check the status of loan application LN-1042 and report what is missing",
+  "total_steps": 7,
+  "extracted_data": {
+    "application_id": "LN-1042",
+    "status": "Waiting for Documents",
+    "missing_documents": [
+      "Proof of Income",
+      "Bank Statements"
+    ]
+  },
+  "error": "",
+  "duration_seconds": 38.24,
+  "steps": [
+    {
+      "step_index": 0,
+      "timestamp": 1789066377.5933437,
+      "url": "http://127.0.0.1:8080/login",
+      "elements_count": 3,
+      "decision": {
+        "tool": "perform_action",
+        "args": {
+          "value": "agent",
+          "description": "Enter username",
+          "action_type": "type",
+          "ref": "e0"
+        }
+      },
+      "action_result": {
+        "status": "success",
+        "message": "type completed",
+        "error": ""
+      },
+      "screenshot": "evidence\\discovery_b95375a7\\step_000.png"
+    },
+    {
+      "step_index": 1,
+      "timestamp": 1789066386.7132158,
+      "url": "http://127.0.0.1:8080/login",
+      "elements_count": 3,
+      "decision": {
+        "tool": "perform_action",
+        "args": {
+          "description": "Enter password",
+          "value": "agent",
+          "ref": "e1",
+          "action_type": "type"
+        }
+      },
+      "action_result": {
+        "status": "success",
+        "message": "type completed",
+        "error": ""
+      },
+      "screenshot": "evidence\\discovery_b95375a7\\step_001.png"
+    },
+    {
+      "step_index": 2,
+      "timestamp": 1789066390.9761481,
+      "url": "http://127.0.0.1:8080/login",
+      "elements_count": 3,
+      "decision": {
+        "tool": "perform_action",
+        "args": {
+          "action_type": "click",
+          "ref": "e2",
+          "description": "Click Sign In button"
+        }
+      },
+      "action_result": {
+        "status": "success",
+        "message": "click completed",
+        "error": ""
+      },
+      "screenshot": "evidence\\discovery_b95375a7\\step_002.png"
+    },
+    {
+      "step_index": 3,
+      "timestamp": 1789066398.5956683,
+      "url": "http://127.0.0.1:8080/search",
+      "elements_count": 3,
+      "decision": {
+        "tool": "perform_action",
+        "args": {
+          "description": "Enter loan application number LN-1042 into search box",
+          "ref": "e1",
+          "value": "LN-1042",
+          "action_type": "type"
+        }
+      },
+      "action_result": {
+        "status": "success",
+        "message": "type completed",
+        "error": ""
+      },
+      "screenshot": "evidence\\discovery_b95375a7\\step_003.png"
+    },
+    {
+      "step_index": 4,
+      "timestamp": 1789066400.246748,
+      "url": "http://127.0.0.1:8080/search",
+      "elements_count": 3,
+      "decision": {
+        "tool": "perform_action",
+        "args": {
+          "description": "Click Search button",
+          "ref": "e2",
+          "action_type": "click"
+        }
+      },
+      "action_result": {
+        "status": "success",
+        "message": "click completed",
+        "error": ""
+      },
+      "screenshot": "evidence\\discovery_b95375a7\\step_004.png"
+    },
+    {
+      "step_index": 5,
+      "timestamp": 1789066402.7438421,
+      "url": "http://127.0.0.1:8080/search?q=LN-1042",
+      "elements_count": 4,
+      "decision": {
+        "tool": "perform_action",
+        "args": {
+          "ref": "e3",
+          "action_type": "click",
+          "description": "Click on loan application LN-1042 to view details"
+        }
+      },
+      "action_result": {
+        "status": "success",
+        "message": "click completed",
+        "error": ""
+      },
+      "screenshot": "evidence\\discovery_b95375a7\\step_005.png"
+    },
+    {
+      "step_index": 6,
+      "timestamp": 1789066409.0218635,
+      "url": "http://127.0.0.1:8080/application/LN-1042",
+      "elements_count": 2,
+      "decision": {
+        "tool": "mark_complete",
+        "args": {
+          "extracted_data": {
+            "application_id": "LN-1042",
+            "status": "Waiting for Documents",
+            "missing_documents": [
+              "Proof of Income",
+              "Bank Statements"
+            ]
+          },
+          "summary": "Loan application LN-1042 is waiting for documents. Missing documents: Proof of Income, Bank Statements."
+        }
+      },
+      "action_result": {
+        "status": "complete",
+        "data": {
+          "application_id": "LN-1042",
+          "status": "Waiting for Documents",
+          "missing_documents": [
+            "Proof of Income",
+            "Bank Statements"
+          ]
+        }
+      },
+      "screenshot": "evidence\\discovery_b95375a7\\step_006.png"
+    }
+  ]
+}
