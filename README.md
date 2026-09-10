@@ -50,7 +50,7 @@ It has five synthetic loan applications with different statuses (Waiting for Doc
 ### Installation
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/DattaSaiPhanindra/Loan-Status-Agent.git
 cd loan-status-agent
 python -m venv .venv
 
