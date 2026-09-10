@@ -9,7 +9,7 @@ dependencies = [
     "playwright",
     "pydantic>=2.0",
     "pydantic-settings",
-    "anthropic",
+    "google-genai",
     "python-dotenv",
     "click",
 ]
