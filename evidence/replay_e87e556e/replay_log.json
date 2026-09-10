@@ -1,0 +1,70 @@
+{
+  "run_id": "replay_e87e556e",
+  "artifact_id": "009f0f8a-dfc7-45dd-956e-48f98addf357",
+  "params": {
+    "application_id": "LN-2099"
+  },
+  "status": "success",
+  "outputs": {
+    "status": "Under Review",
+    "missing_documents": [],
+    "next_steps": "Pending credit committee review scheduled for next week"
+  },
+  "steps": [
+    {
+      "step_index": 0,
+      "description": "Enter username",
+      "status": "success",
+      "message": "Completed: Enter username",
+      "error": "",
+      "screenshot_path": "evidence\\replay_e87e556e\\step_000.png",
+      "duration_seconds": 0.7239272594451904
+    },
+    {
+      "step_index": 1,
+      "description": "Enter password",
+      "status": "success",
+      "message": "Completed: Enter password",
+      "error": "",
+      "screenshot_path": "evidence\\replay_e87e556e\\step_001.png",
+      "duration_seconds": 0.5292789936065674
+    },
+    {
+      "step_index": 2,
+      "description": "Click Sign In button",
+      "status": "success",
+      "message": "Completed: Click Sign In button",
+      "error": "",
+      "screenshot_path": "evidence\\replay_e87e556e\\step_002.png",
+      "duration_seconds": 0.6825237274169922
+    },
+    {
+      "step_index": 3,
+      "description": "Type application ID into search box",
+      "status": "success",
+      "message": "Completed: Type application ID into search box",
+      "error": "",
+      "screenshot_path": "evidence\\replay_e87e556e\\step_003.png",
+      "duration_seconds": 0.5362856388092041
+    },
+    {
+      "step_index": 4,
+      "description": "Click Search button",
+      "status": "success",
+      "message": "Completed: Click Search button",
+      "error": "",
+      "screenshot_path": "evidence\\replay_e87e556e\\step_004.png",
+      "duration_seconds": 0.7953238487243652
+    },
+    {
+      "step_index": 5,
+      "description": "Click on application link in results",
+      "status": "success",
+      "message": "Completed: Click on application link in results",
+      "error": "",
+      "screenshot_path": "evidence\\replay_e87e556e\\step_005.png",
+      "duration_seconds": 0.6202259063720703
+    }
+  ],
+  "total_duration_seconds": 5.011052131652832
+}

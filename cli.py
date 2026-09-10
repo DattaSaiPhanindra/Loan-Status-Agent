@@ -90,9 +90,72 @@ async def _discover(goal: str, url: str, max_steps: int, headless: bool):
 @main.command()
 @click.argument("artifact_path")
 @click.argument("params")
-def replay(artifact_path: str, params: str):
+@click.option("--headless", is_flag=True, default=False, help="Run browser headless")
+def replay(artifact_path: str, params: str, headless: bool):
     """Replay a saved artifact deterministically."""
-    click.echo("Not implemented yet")
+    asyncio.run(_replay(artifact_path, params, headless))
+
+
+async def _replay(artifact_path: str, params_json: str, headless: bool):
+    from pathlib import Path
+
+    from playwright.async_api import async_playwright
+
+    from artifact.store import load_artifact
+    from replay.engine import run_replay
+
+    settings = Settings()
+    run_id = f"replay_{uuid.uuid4().hex[:8]}"
+
+    artifact = load_artifact(Path(artifact_path))
+    click.echo(f"Loaded artifact: {artifact.name} v{artifact.version}")
+    click.echo(f"Artifact ID: {artifact.artifact_id}")
+
+    try:
+        params = json.loads(params_json)
+    except json.JSONDecodeError:
+        click.echo(f"ERROR: Invalid JSON params: {params_json}")
+        return
+
+    click.echo(f"Replay run: {run_id}")
+    click.echo(f"Params: {json.dumps(params)}")
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=headless)
+        page = await browser.new_page()
+
+        result = await run_replay(
+            page=page,
+            artifact=artifact,
+            params=params,
+            evidence_dir=settings.evidence_dir,
+            run_id=run_id,
+        )
+
+        await browser.close()
+
+    click.echo(f"\n{'='*60}")
+    if result.status == "success":
+        click.echo(
+            f"SUCCESS - Replay completed in {result.total_duration_seconds:.1f}s"
+        )
+        click.echo("Outputs:")
+        click.echo(json.dumps(result.outputs, indent=2))
+    elif result.status == "business_outcome":
+        click.echo(f"BUSINESS OUTCOME - {result.outcome_type}")
+        click.echo(f"Message: {result.outcome_message}")
+    else:
+        click.echo(f"FAILURE - {result.error_type}")
+        click.echo(f"Error: {result.error_message}")
+        click.echo(f"Failed at step: {result.failed_step}")
+        if result.expected:
+            click.echo(f"Expected: {result.expected}")
+        if result.observed:
+            click.echo(f"Observed: {result.observed}")
+
+    click.echo(f"Steps: {len(result.steps)}")
+    click.echo(f"Evidence: {settings.evidence_dir / run_id}")
+    click.echo(f"{'='*60}")
 
 
 @main.command("escalate-demo")

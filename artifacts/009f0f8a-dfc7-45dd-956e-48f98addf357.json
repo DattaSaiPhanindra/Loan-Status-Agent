@@ -1,5 +1,5 @@
 {
-  "artifact_id": "57613018-19f2-4396-a5c7-86e632191617",
+  "artifact_id": "009f0f8a-dfc7-45dd-956e-48f98addf357",
   "name": "check_loan_application_status",
   "version": "1.0.0",
   "description": "Look up a loan application and extract its status, missing documents, and next steps",
@@ -8,7 +8,7 @@
   "inputs": [
     {
       "name": "application_id",
-      "description": "The loan application ID to look up (e.g. LN-1042)",
+      "description": "The loan application ID to look up",
       "param_type": "string",
       "required": true,
       "default": "",
@@ -18,23 +18,23 @@
   ],
   "outputs": [
     {
-      "name": "application_id",
-      "description": "Extracted application id from application detail page",
-      "field_type": "string",
-      "locator": null,
-      "extract_pattern": ""
-    },
-    {
       "name": "status",
-      "description": "Extracted status from application detail page",
+      "description": "Current application status",
       "field_type": "string",
       "locator": null,
       "extract_pattern": ""
     },
     {
       "name": "missing_documents",
-      "description": "Extracted missing documents from application detail page",
+      "description": "List of missing documents",
       "field_type": "list",
+      "locator": null,
+      "extract_pattern": ""
+    },
+    {
+      "name": "next_steps",
+      "description": "Next action required",
+      "field_type": "string",
       "locator": null,
       "extract_pattern": ""
     }
@@ -52,7 +52,7 @@
           ],
           "role": "textbox",
           "name": "username",
-          "description": "Enter username"
+          "description": "Login username field"
         },
         "value": "agent",
         "is_parameterized": false,
@@ -61,7 +61,7 @@
       "checkpoint": null,
       "expected_url_pattern": "",
       "is_critical": true,
-      "risk_level": "read"
+      "risk_level": "safe"
     },
     {
       "step_index": 1,
@@ -75,7 +75,7 @@
           ],
           "role": "textbox",
           "name": "password",
-          "description": "Enter password"
+          "description": "Login password field"
         },
         "value": "agent",
         "is_parameterized": false,
@@ -84,7 +84,7 @@
       "checkpoint": null,
       "expected_url_pattern": "",
       "is_critical": true,
-      "risk_level": "read"
+      "risk_level": "safe"
     },
     {
       "step_index": 2,
@@ -98,7 +98,7 @@
           ],
           "role": "button",
           "name": "Sign In",
-          "description": "Click Sign In button"
+          "description": "Login submit button"
         },
         "value": "",
         "is_parameterized": false,
@@ -106,8 +106,8 @@
       },
       "checkpoint": {
         "check_type": "url_contains",
-        "value": "login",
-        "description": "Page should reflect action: Click Sign In button"
+        "value": "search",
+        "description": "Should navigate to search page after login"
       },
       "expected_url_pattern": "",
       "is_critical": true,
@@ -115,7 +115,7 @@
     },
     {
       "step_index": 3,
-      "description": "Enter loan application number LN-1042 into search box",
+      "description": "Type application ID into search box",
       "action": {
         "action_type": "type",
         "locator": {
@@ -125,7 +125,7 @@
           ],
           "role": "textbox",
           "name": "q",
-          "description": "Enter loan application number LN-1042 into search box"
+          "description": "Search input field"
         },
         "value": "",
         "is_parameterized": true,
@@ -148,16 +148,16 @@
           ],
           "role": "button",
           "name": "Search",
-          "description": "Click Search button"
+          "description": "Search submit button"
         },
         "value": "",
         "is_parameterized": false,
         "param_key": ""
       },
       "checkpoint": {
-        "check_type": "url_contains",
-        "value": "search",
-        "description": "Page should reflect action: Click Search button"
+        "check_type": "text_visible",
+        "value": "Application ID",
+        "description": "Search results table should appear"
       },
       "expected_url_pattern": "",
       "is_critical": true,
@@ -165,24 +165,24 @@
     },
     {
       "step_index": 5,
-      "description": "Click on loan application LN-1042 to view details",
+      "description": "Click on application link in results",
       "action": {
         "action_type": "click",
         "locator": {
-          "primary": "a:has-text(\"LN-1042\")",
+          "primary": "a:has-text(\"__APP_ID__\")",
           "fallbacks": [],
           "role": "link",
-          "name": "LN-1042",
-          "description": "Click on loan application LN-1042 to view details"
+          "name": "__APP_ID__",
+          "description": "Application ID link in search results"
         },
         "value": "",
-        "is_parameterized": false,
-        "param_key": ""
+        "is_parameterized": true,
+        "param_key": "application_id"
       },
       "checkpoint": {
         "check_type": "url_contains",
-        "value": "search?q=LN-1042",
-        "description": "Page should reflect action: Click on loan application LN-1042 to view details"
+        "value": "application/",
+        "description": "Should navigate to application detail page"
       },
       "expected_url_pattern": "",
       "is_critical": true,
@@ -194,7 +194,7 @@
     "value": "application/",
     "description": "Should be on application detail page"
   },
-  "created_at": "2026-09-10T18:53:29.573272+00:00",
+  "created_at": "2026-09-10T19:13:26.029672+00:00",
   "created_by": "discovery",
   "tenant_id": "",
   "base_artifact_id": "",
